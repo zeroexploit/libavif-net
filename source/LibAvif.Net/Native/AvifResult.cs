@@ -1,0 +1,32 @@
+﻿namespace LibAvif.Net.Native
+{
+    enum AvifResult
+    {
+        AVIF_RESULT_OK = 0,
+        AVIF_RESULT_UNKNOWN_ERROR,
+        AVIF_RESULT_INVALID_FTYP,
+        AVIF_RESULT_NO_CONTENT,
+        AVIF_RESULT_NO_YUV_FORMAT_SELECTED,
+        AVIF_RESULT_REFORMAT_FAILED,
+        AVIF_RESULT_UNSUPPORTED_DEPTH,
+        AVIF_RESULT_ENCODE_COLOR_FAILED,
+        AVIF_RESULT_ENCODE_ALPHA_FAILED,
+        AVIF_RESULT_BMFF_PARSE_FAILED,
+        AVIF_RESULT_NO_AV1_ITEMS_FOUND,
+        AVIF_RESULT_DECODE_COLOR_FAILED,
+        AVIF_RESULT_DECODE_ALPHA_FAILED,
+        AVIF_RESULT_COLOR_ALPHA_SIZE_MISMATCH,
+        AVIF_RESULT_ISPE_SIZE_MISMATCH,
+        AVIF_RESULT_NO_CODEC_AVAILABLE,
+        AVIF_RESULT_NO_IMAGES_REMAINING,
+        AVIF_RESULT_INVALID_EXIF_PAYLOAD,
+        AVIF_RESULT_INVALID_IMAGE_GRID,
+        AVIF_RESULT_INVALID_CODEC_SPECIFIC_OPTION,
+        AVIF_RESULT_TRUNCATED_DATA,
+        AVIF_RESULT_IO_NOT_SET, // the avifIO field of avifDecoder is not set
+        AVIF_RESULT_IO_ERROR,
+        AVIF_RESULT_WAITING_ON_IO, // similar to EAGAIN/EWOULDBLOCK, this means the avifIO doesn't have necessary data available yet
+        AVIF_RESULT_INVALID_ARGUMENT, // an argument passed into this function is invalid
+        AVIF_RESULT_NOT_IMPLEMENTED   // a requested code path is not (yet) implemented
+    }
+}
