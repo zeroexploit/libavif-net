@@ -14,10 +14,8 @@ namespace LibAvif.Net.Native
                                                       // Unused when converting to YUV. avifRGBImageSetDefaults() prefers quality over speed.
         public int ignoreAlpha;        // Used for XRGB formats, treats formats containing alpha (such as ARGB) as if they were
                                        // RGB, treating the alpha bits as if they were all 1.
-        public int alphaPremultiplied; // indicates if RGB value is pre-multiplied by alpha. Default: false
-
-        IntPtr pixels;
-        UInt32 rowBytes;
+        public IntPtr pixels;
+        public UInt32 rowBytes;
     }
 
     enum AvifRGBFormat

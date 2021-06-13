@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace LibAvif.Net.Native
 {
     [StructLayout(LayoutKind.Sequential)]
-    struct AvifImage
+    class AvifImage
     {
         // Image information
         public UInt32 width;
@@ -17,11 +15,11 @@ namespace LibAvif.Net.Native
         public AvifRange yuvRange;
         public AvifChromaSamplePosition yuvChromaSamplePosition;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3, ArraySubType = UnmanagedType.U1)]
-        public IntPtr[] yuvPlanes;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public IntPtr[] yuvPlanes; // uint8_t * [3]
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3, ArraySubType = UnmanagedType.U4)]
-        public UInt32[] yuvRowBytes;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public UInt32[] yuvRowBytes;// uint32_t  [3] 
 
         public int imageOwnsYUVPlanes;
 
