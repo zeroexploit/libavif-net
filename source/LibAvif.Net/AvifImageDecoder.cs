@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace LibAvif.Net
@@ -10,54 +11,67 @@ namespace LibAvif.Net
     {
         public static Image FromFile(string path)
         {
-            var decoderPtr = LibAvifNative.AvifDecoderCreate();
-            var imagePtr = LibAvifNative.AvifImageCreateEmpty();
+            if (string.IsNullOrWhiteSpace(path))
+                throw new AvifInputNullOrEmptyException();
 
-            var result = LibAvifNative.AvifDecoderReadFile(decoderPtr, imagePtr, Marshal.StringToHGlobalAnsi(path));
-            if (result != AvifResult.AVIF_RESULT_OK)
-                throw new Exception("Unable to open image: " + Marshal.PtrToStringAnsi(LibAvifNative.AvifResultToString(result))); // todo: cleanup and use explicit exception
+            if (!File.Exists(path))
+                throw new AvifFileNotFoundException(path);
 
-            var rgbImagePtr = Marshal.AllocHGlobal(Marshal.SizeOf<AvifRgbImage>());
-            LibAvifNative.AvifRGBImageSetDefaults(rgbImagePtr, imagePtr);
-            LibAvifNative.AvifRGBImageAllocatePixels(rgbImagePtr);
+            var decoderPtr = IntPtr.Zero;
+            var imagePtr = IntPtr.Zero;
+            var rgbImagePtr = IntPtr.Zero; ;
 
-            if (LibAvifNative.AvifImageYUVToRGB(imagePtr, rgbImagePtr) != AvifResult.AVIF_RESULT_OK)
-                throw new Exception("Unable to convert yuv to rgb: " + Marshal.PtrToStringAnsi(LibAvifNative.AvifResultToString(result))); // todo: cleanup and use explicit exception
-
-            var rgbImage = Marshal.PtrToStructure<AvifRgbImage>(rgbImagePtr);
-
-            var elements = rgbImage.width * rgbImage.height * 4;
-            var buffer = new byte[elements];
-
-            // rgbImage.depth > 8 ??
-            Marshal.Copy(rgbImage.pixels, buffer, 0, (int)elements);
-
-            for (var i = 0; i < buffer.Length; i += 4)
+            try
             {
-                var R = buffer[i];
-                var G = buffer[i + 1];
-                var B = buffer[i + 2];
-                var A = buffer[i + 3];
+                decoderPtr = LibAvifNative.AvifDecoderCreate();
+                imagePtr = LibAvifNative.AvifImageCreateEmpty();
+                rgbImagePtr = Marshal.AllocHGlobal(Marshal.SizeOf<AvifRgbImage>());
 
-                buffer[i] = B;
-                buffer[i + 1] = G;
-                buffer[i + 2] = R;
-                buffer[i + 3] = A;
+                var result = LibAvifNative.AvifDecoderReadFile(decoderPtr, imagePtr, Marshal.StringToHGlobalAnsi(path));
+                if (result != AvifResult.AVIF_RESULT_OK)
+                    throw new AvifDecoderReadFileException(path, Marshal.PtrToStringAnsi(LibAvifNative.AvifResultToString(result)));
+
+                LibAvifNative.AvifRGBImageSetDefaults(rgbImagePtr, imagePtr);
+                var rgbImage = Marshal.PtrToStructure<AvifRgbImage>(rgbImagePtr);
+                rgbImage.format = AvifRGBFormat.AVIF_RGB_FORMAT_BGRA;
+                Marshal.StructureToPtr(rgbImage, rgbImagePtr, true);
+                LibAvifNative.AvifRGBImageAllocatePixels(rgbImagePtr);
+
+                if (LibAvifNative.AvifImageYUVToRGB(imagePtr, rgbImagePtr) != AvifResult.AVIF_RESULT_OK)
+                    throw new AvifImageYuvToRgbException(path, Marshal.PtrToStringAnsi(LibAvifNative.AvifResultToString(result)));
+
+                rgbImage = Marshal.PtrToStructure<AvifRgbImage>(rgbImagePtr);
+                if (rgbImage.depth > 8)
+                    throw new AvifBitDepthNotSupportedException(rgbImage.depth);
+
+                const int valuesPerPixel = 4;
+                var elements = rgbImage.width * rgbImage.height * valuesPerPixel;
+                var buffer = new byte[elements];
+                Marshal.Copy(rgbImage.pixels, buffer, 0, (int)elements);
+
+                var bitmap = new Bitmap((int)rgbImage.width, (int)rgbImage.height, PixelFormat.Format32bppArgb);
+                var rect = new Rectangle(0, 0, (int)rgbImage.width, (int)rgbImage.height);
+                var bmpData = bitmap.LockBits(rect, ImageLockMode.ReadWrite, bitmap.PixelFormat);
+                var ptr = bmpData.Scan0;
+                Marshal.Copy(buffer, 0, ptr, buffer.Length);
+                bitmap.UnlockBits(bmpData);
+
+                return bitmap;
             }
+            finally
+            {
+                if (rgbImagePtr != IntPtr.Zero)
+                {
+                    LibAvifNative.AvifRGBImageFreePixels(rgbImagePtr);
+                    Marshal.FreeHGlobal(rgbImagePtr);
+                }
 
-            var bitmap = new Bitmap((int)rgbImage.width, (int)rgbImage.height, PixelFormat.Format32bppArgb);
-            var rect = new Rectangle(0, 0, (int)rgbImage.width, (int)rgbImage.height);
-            var bmpData = bitmap.LockBits(rect, ImageLockMode.ReadWrite, bitmap.PixelFormat);
-            var ptr = bmpData.Scan0;
-            Marshal.Copy(buffer, 0, ptr, buffer.Length);
-            bitmap.UnlockBits(bmpData);
+                if (imagePtr != IntPtr.Zero)
+                    LibAvifNative.AvifImageDestroy(imagePtr);
 
-            LibAvifNative.AvifRGBImageFreePixels(rgbImagePtr);
-            Marshal.FreeHGlobal(rgbImagePtr);
-            LibAvifNative.AvifImageDestroy(imagePtr);
-            LibAvifNative.AvifDecoderDestroy(decoderPtr);
-
-            return bitmap;
+                if (decoderPtr != IntPtr.Zero)
+                    LibAvifNative.AvifDecoderDestroy(decoderPtr);
+            }
         }
     }
 }
