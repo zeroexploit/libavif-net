@@ -9,4 +9,10 @@
     <ProjectReference Include="..\..\source\LibAvif.Net\LibAvif.Net.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="test.avif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

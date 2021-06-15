@@ -1,17 +1,25 @@
 ﻿using LibAvif.Net;
 using System.Drawing.Imaging;
+using System.IO;
 
 namespace LibAvif.Decoding
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            using var image = AvifImageDecoder.FromFile("/home/roddel/test.avif");//AvifImageDecoder.FromFile(@"C:\Users\j.roddelkopf\Downloads\Neuer Ordner\test.avif");
-            if (image == null)
-                return;
+            // load avif from file
+            using (var fromFileImage = AvifImageDecoder.FromFile("test.avif"))
+                fromFileImage.Save("fromFile.jpg", ImageFormat.Jpeg);
 
-            image.Save("/home/roddel/test.jpg", ImageFormat.Jpeg);
+            // load avif from in-memory byte array
+            using (var fromBufferImage = AvifImageDecoder.FromBuffer(File.ReadAllBytes("test.avif")))
+                fromBufferImage.Save("fromBuffer.jpg", ImageFormat.Jpeg);
+
+            // load avif from stream
+            using (var inputStream = new FileStream("test.avif", FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var fromStreamImage = AvifImageDecoder.FromStream(inputStream))
+                fromStreamImage.Save("fromStream.jpg", ImageFormat.Jpeg);
         }
     }
 }

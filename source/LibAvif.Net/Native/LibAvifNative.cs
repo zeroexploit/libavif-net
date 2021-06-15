@@ -44,6 +44,9 @@ namespace LibAvif.Net.Native
         [DllImport("libavif", EntryPoint = "avifImageDestroy", CallingConvention = CallingConvention.StdCall)]
         public static extern void AvifImageDestroy(IntPtr image);
 
+        [DllImport("libavif", EntryPoint = "avifDecoderReadMemory", CallingConvention = CallingConvention.StdCall)]
+        public static extern AvifResult AvifDecoderReadMemory(IntPtr decoder, IntPtr avifImage, IntPtr buffer, int bufferSize);
+
         
     }
 }
