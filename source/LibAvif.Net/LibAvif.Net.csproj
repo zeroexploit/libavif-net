@@ -5,6 +5,13 @@
     <PackageId>Omegaframe.LibAvif.Net</PackageId>
     <Authors>Jörn Roddelkopf</Authors>
     <Company>Omegaframe</Company>
+    <Description>Wrapper for libavif. Supports En- and Decoding of avif Images. Requires libafiv-dev to be installed. Required libavif version currently: 0.8.2.</Description>
+    <Copyright>2021 Omegaframe</Copyright>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryType>github</RepositoryType>
+    <RepositoryUrl>https://github.com/omegaframe/libavif-net</RepositoryUrl>
+    <PackageTags>avif image picture encoder decoder drawing wrapper</PackageTags>
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

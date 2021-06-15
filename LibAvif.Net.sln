@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibAvif.Net", "source\LibAv
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{6264BF6E-4D3A-45B4-B4B6-FBD2A3BED8EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibAvif.Decoding", "examples\LibAvif.Decoding\LibAvif.Decoding.csproj", "{60F7FC9B-0134-4EE4-94CA-A55005ABD9B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.Decoding", "examples\Example.Decoding\Example.Decoding.csproj", "{60F7FC9B-0134-4EE4-94CA-A55005ABD9B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

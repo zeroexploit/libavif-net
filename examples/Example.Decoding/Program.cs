@@ -1,8 +1,8 @@
-﻿using LibAvif.Net;
-using System.Drawing.Imaging;
+﻿using System.Drawing.Imaging;
 using System.IO;
+using LibAvif.Net;
 
-namespace LibAvif.Decoding
+namespace Example.Decoding
 {
     class Program
     {

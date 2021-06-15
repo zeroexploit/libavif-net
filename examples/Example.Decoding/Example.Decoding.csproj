@@ -3,6 +3,9 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
+    <Authors>Jörn Roddelkopf</Authors>
+    <Company>Omegaframe</Company>
+    <Description>example projects shows how to decode avif picture into system.drawing image and stores it as jpeg</Description>
   </PropertyGroup>
 
   <ItemGroup>
